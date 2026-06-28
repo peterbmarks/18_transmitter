@@ -1,7 +1,7 @@
 # Building the Transmitter Examples
 
-This folder builds standalone for the Raspberry Pi Pico (RP2040). It produces
-four flashable `.uf2` binaries:
+This folder builds standalone for the Raspberry Pi Pico (RP2040) and the
+Raspberry Pi Pico 2 (RP2350). It produces four flashable `.uf2` binaries:
 
 - `transmitter_serial_example_mixer.uf2`
 - `transmitter_microphone_example_mixer.uf2`
@@ -64,6 +64,21 @@ cmake -S . -B build -G Ninja \
   -DCMAKE_CXX_COMPILER=$HOME/.pico-sdk/toolchain/14_2_Rel1/bin/arm-none-eabi-g++
 ```
 
+To build for the **Raspberry Pi Pico 2** (RP2350) instead, pass
+`-DPICO_BOARD=pico2` (or `pico2_w`). Everything else is identical:
+
+```sh
+cmake -S . -B build -G Ninja \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DPICO_BOARD=pico2 \
+  -DCMAKE_C_COMPILER=$HOME/.pico-sdk/toolchain/14_2_Rel1/bin/arm-none-eabi-gcc \
+  -DCMAKE_CXX_COMPILER=$HOME/.pico-sdk/toolchain/14_2_Rel1/bin/arm-none-eabi-g++
+```
+
+The transmitter's PIO/NCO timing assumes a 125 MHz system clock. The firmware
+pins the clock to 125 MHz at startup, so the RF output stays on frequency even
+though the Pico 2 boots at 150 MHz — no further changes are needed.
+
 ### 4. Build
 
 ```sh
@@ -100,4 +115,8 @@ reboots and runs the program.
   subdirectory of the parent build, and configures the SDK and the local
   `psu_mode` library accordingly — so both build styles work.
 - The board defaults to a standard `pico`. To target a different board (e.g.
-  `pico_w`), pass `-DPICO_BOARD=pico_w` at the configure step.
+  `pico_w`, `pico2`, or `pico2_w`), pass `-DPICO_BOARD=<board>` at the configure
+  step.
+- The firmware forces the system clock to 125 MHz at startup. This is the native
+  speed of the RP2040 and is required by the PIO/NCO timing; on the RP2350
+  (Pico 2) it overrides the 150 MHz default so the RF output stays accurate.
