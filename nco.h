@@ -34,6 +34,7 @@ private:
   uint8_t ping_pong = 0u;
   uint32_t interrupts;
   bool dma_started = false;
+  uint32_t m_stall_count = 0u;
   static const uint8_t bits_per_word = 32u;
   static const uint16_t waveform_length_bits = 256u;
   static const uint16_t waveform_length_words =
@@ -56,6 +57,7 @@ public:
   double get_sample_frequency_Hz(uint8_t waveforms_per_sample);
   uint8_t get_waveforms_per_sample(double sample_frequency_Hz);
   void output_sample(int16_t phase, uint8_t waveforms_per_sample);
+  uint32_t get_stall_count() const { return m_stall_count; }
 };
 
 #endif

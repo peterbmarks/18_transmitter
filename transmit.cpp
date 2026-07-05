@@ -73,8 +73,11 @@ void transmit(tx_mode_t mode, double frequency_Hz,
 
       // timeout ends transmission
       audio = getchar_timeout_us(1000);
-      if (audio == PICO_ERROR_TIMEOUT)
+      if (audio == PICO_ERROR_TIMEOUT) {
+        printf("pio stalls during transmission: %u\r\n",
+              rf_nco.get_stall_count());
         return;
+      }
 
       // read audio from serial port
       audio <<= 8;

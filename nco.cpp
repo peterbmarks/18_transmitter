@@ -167,9 +167,14 @@ void nco::output_sample(int16_t phase, uint8_t waveforms_per_sample) {
   }
   gpio_put(2, 0);
 
-  // check for PIO stalls
+  // check for PIO stalls. Don't printf() here: it shares the USB serial
+  // connection with the incoming audio stream, and can block for up to
+  // PICO_STDIO_USB_STDOUT_TIMEOUT_US (500ms default) if the host isn't
+  // reading it, which starves the PIO further and cascades into more
+  // stalls. Just count them; the caller reports the total once streaming
+  // stops.
   if (pio->fdebug) {
-    printf("pio stall, potential lost samples debug: %x\n", pio->fdebug);
+    ++m_stall_count;
     pio->fdebug = 0xffffffff; // clear all
   }
 
