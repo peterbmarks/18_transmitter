@@ -65,6 +65,13 @@ The sox utility can be used to convert from most common audio formats.
 #generate a file to send in SSB mode
 sox FileToConvert.mp3 -t s8 -r 10k myfile.wav
 ```
+# Virtual environment for python tools
+
+```
+python3 -m venv .venv
+source .venv/bin/activate
+pip install pyserial numpy 
+```
 
 # Using the Python Transmit Utility
 
